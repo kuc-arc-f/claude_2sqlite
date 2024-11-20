@@ -35,6 +35,7 @@ bun run dev
 * todo1: todo
 * form1: form edit exmple
 * bookmark1: bookmark app
+* user_auth: user auth, sqlite example
 
 ***
 ### ChangeLog
