@@ -1,7 +1,8 @@
 import fs from 'node:fs/promises'
 import express from "express";
 const { PrismaClient } = require('@prisma/client');
-const { z } = require('zod');
+import { z } from 'zod';
+
 
 import { renderToString } from 'react-dom/server';
 import cookieParser from "cookie-parser";
@@ -21,10 +22,10 @@ console.log("env= ", process.env.NODE_ENV);
 //
 
 // Validation schema
-const todoSchema = z.object({
+export const PostSchema = z.object({
   title: z.string().min(2, "タイトルは2文字以上で入力してください"),
   content: z.string().min(1, "内容を入力してください"),
-  contentType: z.string().min(1, "コンテントタイプを入力してください"),
+  contentType: z.string().min(1, "コンテンツタイプを入力してください"),
   age: z.string().optional(),
   public: z.boolean(),
   foodOrange: z.boolean(),
@@ -44,83 +45,94 @@ const todoSchema = z.object({
   textOption2: z.string().optional(),
 });
 
-// Create todo
-app.post('/api/todos', async (req, res) => {
-  try {
-    const validatedData = todoSchema.parse(req.body);
-console.log(req.body);
-    const todo = await prisma.todo.create({
-      data: {
-        ...validatedData,
-        datePublish: validatedData.datePublish ? new Date(validatedData.datePublish) : null,
-        dateUpdate: validatedData.dateUpdate ? new Date(validatedData.dateUpdate) : null,
-      }
-    });
-    res.json(todo);
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      res.status(400).json({ errors: error.errors });
-    } else {
-      res.status(500).json({ error: "Internal server error" });
-    }
-  }
-});
+export type PostInput = z.infer<typeof PostSchema>;
 
-// Get all todos
-app.get('/api/todos', async (req, res) => {
-  const { search } = req.query;
+// 全件取得
+app.get('/api/posts', async (req, res) => {
   try {
-    const todos = await prisma.todo.findMany({
-      where: search ? {
+    const { search } = req.query;
+    let whereClause = {};
+    
+    if (search) {
+      whereClause = {
         OR: [
-          { title: { contains: search } },
-          { content: { contains: search } },
+          { title: { contains: String(search) } },
+          { content: { contains: String(search) } },
         ],
-      } : undefined,
+      };
+    }
+
+    const posts = await prisma.post.findMany({
+      where: whereClause,
       orderBy: { createdAt: 'desc' },
     });
-    res.json(todos);
+    //console.log(posts);
+    res.json(posts);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: 'データの取得に失敗しました' });
   }
 });
 
-// Update todo
-app.put('/api/todos/:id', async (req, res) => {
-  const { id } = req.params;
+// 投稿の作成
+app.post('/api/posts', async (req, res) => {
   try {
-    const validatedData = todoSchema.parse(req.body);
-    const todo = await prisma.todo.update({
+    const validatedData = PostSchema.parse(req.body);
+    
+    const post = await prisma.post.create({
+      data: {
+        ...validatedData,
+        datePublish: validatedData.datePublish ? new Date(validatedData.datePublish) : null,
+        dateUpdate: validatedData.dateUpdate ? new Date(validatedData.dateUpdate) : null,
+      },
+    });
+    
+    res.json(post);
+  } catch (error) {
+    if (error.name === 'ZodError') {
+      res.status(400).json({ error: error.errors });
+    } else {
+      res.status(500).json({ error: '投稿の作成に失敗しました' });
+    }
+  }
+});
+
+// 投稿の更新
+app.put('/api/posts/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const validatedData = PostSchema.parse(req.body);
+    
+    const post = await prisma.post.update({
       where: { id: Number(id) },
       data: {
         ...validatedData,
         datePublish: validatedData.datePublish ? new Date(validatedData.datePublish) : null,
         dateUpdate: validatedData.dateUpdate ? new Date(validatedData.dateUpdate) : null,
-      }
+      },
     });
-    res.json(todo);
+    
+    res.json(post);
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      res.status(400).json({ errors: error.errors });
+    if (error.name === 'ZodError') {
+      res.status(400).json({ error: error.errors });
     } else {
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({ error: '投稿の更新に失敗しました' });
     }
   }
 });
 
-// Delete todo
-app.delete('/api/todos/:id', async (req, res) => {
-  const { id } = req.params;
+// 投稿の削除
+app.delete('/api/posts/:id', async (req, res) => {
   try {
-    await prisma.todo.delete({
+    const { id } = req.params;
+    await prisma.post.delete({
       where: { id: Number(id) },
     });
-    res.status(204).send();
+    res.json({ message: '投稿を削除しました' });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: '投稿の削除に失敗しました' });
   }
 });
-
 // エラーハンドリング
 app.use((err, req, res, next) => {
   console.error(err.stack);

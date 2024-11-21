@@ -14,28 +14,28 @@ datasource db {
 }
 
 
-model Todo {
-  id             Int      @id @default(autoincrement())
-  title          String
-  content        String
-  contentType    String
-  age            String?
-  public         Boolean  @default(false)
-  foodOrange     Boolean  @default(false)
-  foodApple      Boolean  @default(false)
-  foodBanana     Boolean  @default(false)
-  foodMelon      Boolean  @default(false)
-  foodGrape      Boolean  @default(false)
-  datePublish    DateTime?
-  dateUpdate     DateTime?
-  postNumber     String?
-  addressCountry String?
-  addressPref    String?
-  addressCity    String?
-  address1       String?
-  address2       String?
-  textOption1    String?
-  textOption2    String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+model Post {
+  id              Int      @id @default(autoincrement())
+  title           String
+  content         String
+  contentType     String
+  age             String?
+  public          Boolean  @default(false)
+  foodOrange      Boolean  @default(false)
+  foodApple       Boolean  @default(false)
+  foodBanana      Boolean  @default(false)
+  foodMelon       Boolean  @default(false)
+  foodGrape       Boolean  @default(false)
+  datePublish     DateTime?
+  dateUpdate      DateTime?
+  postNumber      String?
+  addressCountry  String?
+  addressPref     String?
+  addressCity     String?
+  address1        String?
+  address2        String?
+  textOption1     String?
+  textOption2     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
