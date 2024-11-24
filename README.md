@@ -6,7 +6,7 @@
  
  date    : 2024/11/19
 
- update :  2024/11/25
+ update :  2024/11/25 
 
 ***
 
@@ -36,6 +36,7 @@ bun run dev
 * form1: form edit exmple
 * bookmark1: bookmark app
 * user_auth: user auth, sqlite example
+* workers1 : d1 database + CF-workers , example
 
 ***
 ### ChangeLog
