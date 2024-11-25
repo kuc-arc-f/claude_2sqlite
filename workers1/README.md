@@ -39,5 +39,10 @@ npmは zod 使用したい。
 検証内容は、下記です。
 TODOデータ: 未入力は、エラー
 ```
+***
+### workers API + d1
+
+https://github.com/kuc-arc-f/workers16
+
 
 ***
