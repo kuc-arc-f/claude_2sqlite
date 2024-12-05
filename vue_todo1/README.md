@@ -20,6 +20,12 @@ DB_FILE_NAME=file:local.db
 ```
 
 ***
+* dev-start
+```
+yarn build
+yarn dev
+```
+***
 * drizzle setting
 
 https://orm.drizzle.team/docs/get-started/sqlite-new
