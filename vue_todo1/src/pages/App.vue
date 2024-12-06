@@ -9,9 +9,9 @@ console.log("envValue=", envValue.value)
   <html>
     <head>
         <title>welcome</title>
-        <span v-if="envValue === 'develop'"><link href="/static/style.css" rel="stylesheet" />
+        <span v-if="envValue === 'develop'"><link href="/static/main.css" rel="stylesheet" />
         </span>
-        <span v-else><link href="/public/static/style.css" rel="stylesheet" />
+        <span v-else><link href="/public/static/main.css" rel="stylesheet" />
         </span>
     </head>
     <body>
